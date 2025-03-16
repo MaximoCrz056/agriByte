@@ -7,20 +7,20 @@ const currentYear = new Date().getFullYear();
 
 const footerLinks = [
   {
-    title: "Product",
+    title: "Products",
     links: [
-      { label: "Features", href: "#features" },
-      { label: "Pricing", href: "#pricing" },
-      { label: "Download", href: "#download" },
-      { label: "Updates", href: "#updates" }
+      { label: "Control Systems", href: "#control-systems" },
+      { label: "Sensors", href: "#sensors" },
+      { label: "Automation", href: "#automation" },
+      { label: "Software", href: "#software" }
     ]
   },
   {
     title: "Company",
     links: [
       { label: "About", href: "#about" },
+      { label: "Team", href: "#team" },
       { label: "Careers", href: "#careers" },
-      { label: "Press", href: "#press" },
       { label: "Contact", href: "#contact" }
     ]
   },
@@ -28,8 +28,8 @@ const footerLinks = [
     title: "Resources",
     links: [
       { label: "Blog", href: "#blog" },
-      { label: "Documentation", href: "#docs" },
-      { label: "Guides", href: "#guides" },
+      { label: "Knowledge Base", href: "#knowledge" },
+      { label: "Case Studies", href: "#case-studies" },
       { label: "Support", href: "#support" }
     ]
   }
@@ -38,8 +38,8 @@ const footerLinks = [
 const socialLinks = [
   { icon: "lucide:twitter", label: "Twitter", href: "#twitter" },
   { icon: "lucide:instagram", label: "Instagram", href: "#instagram" },
-  { icon: "lucide:github", label: "GitHub", href: "#github" },
-  { icon: "lucide:linkedin", label: "LinkedIn", href: "#linkedin" }
+  { icon: "lucide:linkedin", label: "LinkedIn", href: "#linkedin" },
+  { icon: "lucide:youtube", label: "YouTube", href: "#youtube" }
 ];
 ---
 
@@ -53,10 +53,10 @@ const socialLinks = [
       <div class="md:col-span-5 lg:col-span-4">
         <a href="/" class="flex items-center space-x-2 mb-5">
           <AnimatedLogo className="h-9 w-9 text-primary" />
-          <span class="font-semibold text-xl tracking-tight">AstroCitrus</span>
+          <span class="font-semibold text-xl tracking-tight">agriByte</span>
         </a>
         <p class="text-muted-foreground mb-5 max-w-md">
-          Experience the perfect blend of innovation and simplicity with our meticulously crafted products.
+          Revolutionizing agriculture with smart greenhouse technology for increased yield, sustainability, and efficiency.
         </p>
         <div class="flex space-x-4">
           {socialLinks.map((link) => (
@@ -91,7 +91,7 @@ const socialLinks = [
       <div class="md:col-span-3 lg:col-span-4">
         <h4 class="font-medium text-lg mb-5">Stay Updated</h4>
         <p class="text-muted-foreground mb-4">
-          Subscribe to our newsletter for the latest updates and offers.
+          Get the latest updates on smart agriculture technology and exclusive offers.
         </p>
         <form class="flex flex-col sm:flex-row gap-2">
           <input 
@@ -113,7 +113,7 @@ const socialLinks = [
     <!-- Bottom Footer -->
     <div class="pt-8 mt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
       <p class="text-sm text-muted-foreground">
-        © {currentYear} AstroCitrus. All rights reserved.
+        © {currentYear} agriByte. All rights reserved.
       </p>
       <div class="flex space-x-6 text-sm text-muted-foreground">
         <a href="#privacy" class="hover:text-accent transition-colors">Privacy Policy</a>

@@ -1,32 +1,110 @@
 
 ---
-// This is a simplified version of the ProductShowcase component
+import { Icon } from 'astro-icon/components';
 ---
 
-<section id="design" class="py-24 relative">
+<section id="solutions" class="py-24 relative">
   <div class="absolute top-1/4 left-0 w-72 h-72 bg-accent/5 rounded-full blur-3xl -z-10"></div>
   <div class="absolute bottom-1/3 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10"></div>
   
   <div class="section-container">
     <div class="scroll-reveal max-w-2xl mx-auto text-center mb-16">
       <div class="inline-block px-3 py-1 mb-4 text-xs font-medium text-accent bg-accent/10 rounded-full">
-        Design
+        Solutions
       </div>
       <h2 class="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
-        Beautifully crafted with attention to every detail
+        Integrated systems for modern agriculture
       </h2>
       <p class="text-muted-foreground text-lg">
-        Our products blend minimalist aesthetics with functional design, creating an experience that's both beautiful and intuitive.
+        Our comprehensive suite of hardware and software solutions work seamlessly together to optimize your greenhouse operations.
       </p>
     </div>
 
-    <!-- Product Showcase Placeholder -->
+    <!-- Product Showcase -->
     <div class="scroll-reveal relative mx-auto max-w-5xl">
-      <div class="aspect-video rounded-xl overflow-hidden bg-accent/5 flex items-center justify-center">
-        <div class="text-center p-8">
-          <h3 class="text-xl font-medium mb-2">Product Showcase</h3>
-          <p class="text-muted-foreground">A beautiful product demonstration would be displayed here.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass-panel rounded-3xl p-6 shadow-lg">
+          <div class="aspect-square mb-6 rounded-2xl overflow-hidden bg-accent/5 flex items-center justify-center relative">
+            <img 
+              src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=1000&auto=format&fit=crop" 
+              alt="Smart Control System" 
+              class="w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+              <div class="p-6 text-white">
+                <h3 class="text-lg font-semibold">Control System</h3>
+                <p class="text-sm opacity-90">Central hub for monitoring and automation</p>
+              </div>
+            </div>
+          </div>
+          <h3 class="text-xl font-medium mb-2">agriByte Controller</h3>
+          <p class="text-muted-foreground mb-4">
+            Our central control unit integrates with all sensors and actuators to provide complete greenhouse management.
+          </p>
+          <ul class="space-y-2 mb-6">
+            <li class="flex items-center gap-2">
+              <Icon name="lucide:check" class="text-accent" size={16} />
+              <span class="text-sm">Touchscreen interface</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <Icon name="lucide:check" class="text-accent" size={16} />
+              <span class="text-sm">Wi-Fi and cellular connectivity</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <Icon name="lucide:check" class="text-accent" size={16} />
+              <span class="text-sm">Battery backup system</span>
+            </li>
+          </ul>
+          <a href="#controller" class="inline-flex items-center gap-1 text-accent text-sm font-medium hover:underline">
+            Learn more
+            <Icon name="lucide:arrow-right" size={14} />
+          </a>
         </div>
+        
+        <div class="glass-panel rounded-3xl p-6 shadow-lg">
+          <div class="aspect-square mb-6 rounded-2xl overflow-hidden bg-accent/5 flex items-center justify-center relative">
+            <img 
+              src="https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=1000&auto=format&fit=crop" 
+              alt="Sensor Network" 
+              class="w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+              <div class="p-6 text-white">
+                <h3 class="text-lg font-semibold">Sensor Network</h3>
+                <p class="text-sm opacity-90">Comprehensive environmental monitoring</p>
+              </div>
+            </div>
+          </div>
+          <h3 class="text-xl font-medium mb-2">agriByte Sensors</h3>
+          <p class="text-muted-foreground mb-4">
+            Our wireless sensor network provides real-time data on all critical environmental factors.
+          </p>
+          <ul class="space-y-2 mb-6">
+            <li class="flex items-center gap-2">
+              <Icon name="lucide:check" class="text-accent" size={16} />
+              <span class="text-sm">Temperature & humidity sensors</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <Icon name="lucide:check" class="text-accent" size={16} />
+              <span class="text-sm">Soil moisture & nutrient monitoring</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <Icon name="lucide:check" class="text-accent" size={16} />
+              <span class="text-sm">CO₂ and light level detection</span>
+            </li>
+          </ul>
+          <a href="#sensors" class="inline-flex items-center gap-1 text-accent text-sm font-medium hover:underline">
+            Learn more
+            <Icon name="lucide:arrow-right" size={14} />
+          </a>
+        </div>
+      </div>
+      
+      <div class="mt-12 text-center">
+        <a href="#all-solutions" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-secondary h-11 px-8">
+          View All Solutions
+          <Icon name="lucide:arrow-right" size={16} />
+        </a>
       </div>
     </div>
   </div>

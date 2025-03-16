@@ -13,7 +13,7 @@ export default defineConfig({
       }
     })
   ],
-  site: 'https://astrocitrus.com',
+  site: 'https://agribyte.com',
   compressHTML: true,
   build: {
     assets: 'assets'
