@@ -1,8 +1,11 @@
-# Welcome to your Lovable project
+# AgriByte - Plataforma de Agricultura Inteligente
 
-## Project info
+AgriByte es una plataforma de agricultura inteligente que utiliza tecnología IoT para monitorear y optimizar cultivos.
 
-**URL**: https://lovable.dev/projects/a454b7df-1162-44c4-95db-992cca315e5a
+## Requisitos previos
+
+- Node.js (v14 o superior)
+- PostgreSQL (v12 o superior)
 
 ## How can I edit this code?
 

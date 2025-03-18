@@ -4,11 +4,12 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
 import ProductShowcase from '@/components/ProductShowcase';
+import SuccessCases from '@/components/SuccessCases';
+import Support from '@/components/Support';
 import Footer from '@/components/Footer';
 
 const Index = () => {
   useEffect(() => {
-    // Scroll to top on page load
     window.scrollTo(0, 0);
   }, []);
 
@@ -19,6 +20,8 @@ const Index = () => {
         <Hero />
         <Features />
         <ProductShowcase />
+        <SuccessCases />
+        <Support />
       </main>
       <Footer />
     </div>

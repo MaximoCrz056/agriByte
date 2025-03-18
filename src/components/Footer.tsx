@@ -1,15 +1,13 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import AnimatedLogo from './AnimatedLogo';
-import ScrollReveal from './ScrollReveal';
-import { ArrowUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import React from "react";
+import AnimatedLogo from "./AnimatedLogo";
+import ScrollReveal from "./ScrollReveal";
+import { ArrowUp, Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -20,33 +18,60 @@ const Footer: React.FC = () => {
           <ScrollReveal direction="up" className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <AnimatedLogo className="h-8 w-8 text-primary" />
-              <span className="font-semibold text-lg">AstroCitrus</span>
+              <span className="font-semibold text-lg">AgriByte</span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md">
-              Elevating digital experiences through minimalist design and intuitive interactions. Our commitment is to create products that are both beautiful and functional.
+              Transformando la agricultura con tecnología de vanguardia. Nuestro
+              compromiso es crear soluciones inteligentes que optimicen la
+              producción y promuevan la sostenibilidad.
             </p>
             <div className="flex space-x-4">
-              {['twitter', 'facebook', 'instagram', 'linkedin'].map((social) => (
+              <div className="flex space-x-4">
                 <a
-                  key={social}
-                  href={`#${social}`}
+                  href="#Twitter"
                   className="w-9 h-9 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-accent transition-colors"
                 >
-                  <span className="sr-only">{social}</span>
-                  <div className="w-4 h-4"></div>
+                  <Twitter className="w-4 h-4" />
+                  <span className="sr-only">Twitter</span>
                 </a>
-              ))}
+                <a
+                  href="#Facebook"
+                  className="w-9 h-9 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+                >
+                  <Facebook className="w-4 h-4" />
+                  <span className="sr-only">Facebook</span>
+                </a>
+                <a
+                  href="#Instagram"
+                  className="w-9 h-9 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+                >
+                  <Instagram className="w-4 h-4" />
+                  <span className="sr-only">Instagram</span>
+                </a>
+                <a
+                  href="#Linkedin"
+                  className="w-9 h-9 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+                >
+                  <Linkedin className="w-4 h-4" />
+                  <span className="sr-only">Linkedin</span>
+                </a>
+              </div>
             </div>
           </ScrollReveal>
 
           {/* Links */}
           <ScrollReveal delay={100} direction="up">
-            <h3 className="font-medium text-lg mb-4">Product</h3>
+            <h3 className="font-medium text-lg mb-4">Soluciones</h3>
             <ul className="space-y-3">
-              {['Features', 'Pricing', 'Testimonials', 'FAQs'].map((item) => (
+              {[
+                "Invernaderos Inteligentes",
+                "Monitoreo Remoto",
+                "Automatización",
+                "Preguntas Frecuentes",
+              ].map((item) => (
                 <li key={item}>
                   <a
-                    href={`#${item.toLowerCase()}`}
+                    href={`#${item.toLowerCase().replace(/\s/g, "-")}`}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {item}
@@ -57,12 +82,17 @@ const Footer: React.FC = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={200} direction="up">
-            <h3 className="font-medium text-lg mb-4">Company</h3>
+            <h3 className="font-medium text-lg mb-4">Empresa</h3>
             <ul className="space-y-3">
-              {['About Us', 'Careers', 'Privacy Policy', 'Terms of Service'].map((item) => (
+              {[
+                "Sobre Nosotros",
+                "Casos de Éxito",
+                "Política de Privacidad",
+                "Términos de Servicio",
+              ].map((item) => (
                 <li key={item}>
                   <a
-                    href={`#${item.toLowerCase().replace(/\s/g, '-')}`}
+                    href={`#${item.toLowerCase().replace(/\s/g, "-")}`}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {item}
@@ -78,19 +108,20 @@ const Footer: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-between items-center">
           <ScrollReveal direction="up">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} AstroCitrus. All rights reserved.
+              © {new Date().getFullYear()} AgriByte. Todos los derechos
+              reservados.
             </p>
           </ScrollReveal>
 
           <ScrollReveal direction="up" delay={100}>
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               className="rounded-full mt-4 sm:mt-0"
               onClick={scrollToTop}
             >
               <ArrowUp size={16} />
-              <span className="sr-only">Back to top</span>
+              <span className="sr-only">Volver arriba</span>
             </Button>
           </ScrollReveal>
         </div>
