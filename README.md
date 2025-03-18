@@ -1,72 +1,94 @@
 # AgriByte - Plataforma de Agricultura Inteligente
 
-AgriByte es una plataforma de agricultura inteligente que utiliza tecnología IoT para monitorear y optimizar cultivos.
+AgriByte es una plataforma de **agricultura inteligente** que utiliza tecnología **IoT** (Internet of Things) para monitorear y optimizar cultivos agrícolas, maximizando la eficiencia y la sostenibilidad en la producción.
 
-## Requisitos previos
+## Requisitos Previos
 
-- Node.js (v14 o superior)
-- PostgreSQL (v12 o superior)
+Antes de comenzar, asegúrate de tener instalados los siguientes programas en tu máquina local:
 
-## How can I edit this code?
+- **Node.js** (v14 o superior)  
+  [Instalación de Node.js](https://nodejs.org/)
+- **PostgreSQL** (v12 o superior)  
+  [Instalación de PostgreSQL](https://www.postgresql.org/download/)
 
-There are several ways of editing your application.
+## Cómo Editar Este Proyecto
 
-**Use Lovable**
+Tienes varias opciones para trabajar en este proyecto:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a454b7df-1162-44c4-95db-992cca315e5a) and start prompting.
+### 1. Usar tu IDE preferido (Localmente)
 
-Changes made via Lovable will be committed automatically to this repo.
+Si prefieres trabajar en tu máquina local con tu IDE favorito, sigue estos pasos:
 
-**Use your preferred IDE**
+1. **Clona el repositorio** usando la URL del proyecto en Git:
+    ```bash
+    git clone <TU_URL_DEL_REPOSITORIO>
+    ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. **Navega al directorio del proyecto**:
+    ```bash
+    cd <TU_NOMBRE_DEL_PROYECTO>
+    ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Instala las dependencias necesarias**:
+    ```bash
+    npm install
+    ```
 
-Follow these steps:
+4. **Inicia el servidor de desarrollo** con recarga automática y vista previa instantánea:
+    ```bash
+    npm run dev
+    ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 2. Editar archivos directamente en GitHub
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Si prefieres hacer cambios directamente en GitHub:
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Navega al archivo que deseas editar.
+2. Haz clic en el botón "Editar" (ícono de lápiz) en la parte superior derecha de la vista del archivo.
+3. Realiza tus cambios y haz clic en "Commit changes" para guardar.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### 3. Usar GitHub Codespaces
 
-**Edit a file directly in GitHub**
+Si deseas trabajar en un entorno de desarrollo preconfigurado en la nube, GitHub Codespaces es una excelente opción:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Ve a la página principal de tu repositorio.
+2. Haz clic en el botón verde "Code" en la parte superior derecha.
+3. Selecciona la pestaña **Codespaces**.
+4. Haz clic en "New codespace" para lanzar un nuevo entorno de Codespace.
+5. Edita los archivos directamente en el Codespace y haz commit y push de los cambios cuando termines.
 
-**Use GitHub Codespaces**
+## Tecnologías Usadas
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Este proyecto está construido con las siguientes tecnologías:
 
-## What technologies are used for this project?
+- **Vite**: Herramienta de construcción rápida y moderna para aplicaciones web.
+- **TypeScript**: Lenguaje de programación con tipado estático, basado en JavaScript.
+- **React**: Biblioteca de JavaScript para la creación de interfaces de usuario interactivas.
+- **shadcn-ui**: Biblioteca de componentes UI para crear interfaces modernas y accesibles.
+- **Tailwind CSS**: Framework de CSS para crear diseños personalizados y responsivos de forma eficiente.
 
-This project is built with .
+## Desplegar el Proyecto
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Para desplegar este proyecto, simplemente abre [Lovable](https://lovable.dev/projects/a454b7df-1162-44c4-95db-992cca315e5a) y haz clic en **Share -> Publish**.
 
-## How can I deploy this project?
+## ¿Puedo Usar un Dominio Personalizado?
 
-Simply open [Lovable](https://lovable.dev/projects/a454b7df-1162-44c4-95db-992cca315e5a) and click on Share -> Publish.
+Actualmente, no soportamos dominios personalizados en Lovable. Si deseas desplegar tu proyecto en un dominio propio, te recomendamos usar [Netlify](https://www.netlify.com/). Puedes seguir nuestra guía para dominios personalizados aquí:  
+[Custom domains en Lovable](https://docs.lovable.dev/tips-tricks/custom-domain/)
 
-## I want to use a custom domain - is that possible?
+---
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Contribuciones
+
+¡Las contribuciones son bienvenidas! Si tienes ideas para mejorar AgriByte, puedes hacer un fork del proyecto, realizar tus cambios y enviar un pull request.
+
+1. Haz un fork de este repositorio.
+2. Crea una nueva rama para tu funcionalidad (`git checkout -b mi-nueva-funcionalidad`).
+3. Realiza los cambios necesarios.
+4. Haz commit de tus cambios (`git commit -am 'Agregando nueva funcionalidad'`).
+5. Haz push a tu rama (`git push origin mi-nueva-funcionalidad`).
+6. Crea un pull request en GitHub.
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](./LICENSE) para más detalles.
