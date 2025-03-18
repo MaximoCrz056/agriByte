@@ -13,6 +13,7 @@ import ManageGreenhouses from "./components/ManageGreenhouses";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuth from "./pages/NotAuth";
 import DashboardFarm from "./pages/DashboardFarm";
+import ManageDevices from "./components/ManageDevices";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route element={<ProtectedRoute adminOnly={true} />}>
             <Route path="/manage-users" element={<ManageUsers />} />
             <Route path="/manage-greenhouses" element={<ManageGreenhouses />} />
+            <Route path="/manage-devices" element={<ManageDevices />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
 

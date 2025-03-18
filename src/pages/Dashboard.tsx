@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SNavbar from "@/components/SNavbar";
-import { User, Sprout } from "lucide-react"; // Importar los íconos
+import { User, Sprout, Sparkles } from "lucide-react"; // Importar los íconos
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export default function Dashboard() {
     <div className="min-h-screen flex flex-col">
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-accent/5 to-transparent"></div>
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-accent/20 to-transparent"></div>
         <div className="absolute top-1/4 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
       </div>
@@ -111,6 +111,18 @@ export default function Dashboard() {
                   >
                     Gestionar Invernaderos
                   </Button>
+                </div>
+
+                <div className="bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <h3 className="text-lg font-medium mb-2 flex items-center">
+                        <Sparkles className="mr-2" /> Dispositivos
+                    </h3>
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate("/manage-devices")}
+                    >
+                        Gestionar Dispositivos
+                    </Button>
                 </div>
               </div>
             </>

@@ -50,7 +50,7 @@ export default function DashboardFarm() {
     <div className="min-h-screen flex flex-col">
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-accent/5 to-transparent"></div>
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-accent/20 to-transparent"></div>
         <div className="absolute top-1/4 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
       </div>
@@ -59,7 +59,7 @@ export default function DashboardFarm() {
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold">Bienvenido a tu dashboard</h1>
-            <Sprout size={48} />
+            <Sprout size={60} className="mr-96"/>
             <Button
               variant="destructive"
               onClick={() => {

@@ -218,6 +218,80 @@ app.post("/api/greenhouses", async (req, res) => {
   }
 });
 
+// Ruta para obtener dispositivos
+app.get("/api/devices", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM Devices");
+    res.json(result.rows); // Devolver todos los dispositivos
+  } catch (error) {
+    console.error("Error al obtener dispositivos:", error);
+    res.status(500).json({ message: "Error al obtener dispositivos" });
+  }
+});
+
+// Ruta para obtener dispositivos por invernadero
+app.get("/api/greenhouses/:greenhouseId/devices", async (req, res) => {
+  const { greenhouseId } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM Devices WHERE greenhouse_id = $1",
+      [greenhouseId]
+    );
+    res.json(result.rows); // Devolver todos los dispositivos
+  } catch (error) {
+    console.error("Error al obtener dispositivos:", error);
+    res.status(500).json({ message: "Error al obtener dispositivos" });
+  }
+});
+
+// ESP32 API
+app.post("/api/greenhouses/:greenhouseId/devices", async (req, res) => {
+  const { sensor_type, location } = req.body;
+  const { greenhouseId } = req.params;
+
+  if (!sensor_type || !location) {
+    return res
+      .status(400)
+      .json({ message: "Todos los campos son obligatorios" });
+  }
+
+  try {
+    const newDevice = await pool.query(
+      "INSERT INTO Devices (sensor_type, location, greenhouse_id) VALUES ($1, $2, $3) RETURNING *",
+      [sensor_type, location, greenhouseId]
+    );
+
+    res.status(201).json(newDevice.rows[0]);
+  } catch (error) {
+    console.error("Error al registrar el ESP32:", error);
+    res.status(500).json({ message: "Error al registrar el ESP32" });
+  }
+});
+
+// Datos de los sensores
+app.post("/api/sensordata", async (req, res) => {
+  const { temperature, humidity } = req.body;
+
+  if (!temperature || !humidity) {
+    return res.status(400).json({ message: "Faltan datos" });
+  }
+
+  try {
+    await pool.query(
+      "INSERT INTO sensor_data (temperature, humidity, created_at) VALUES ($1, $2, NOW())",
+      [temperature, humidity]
+    );
+
+    console.log(
+      `📡 Datos recibidos: Temp: ${temperature}°C, Humedad: ${humidity}%`
+    );
+    res.json({ message: "Datos guardados correctamente" });
+  } catch (error) {
+    console.error("Error al guardar datos del sensor:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);

@@ -69,14 +69,11 @@ Este proyecto está construido con las siguientes tecnologías:
 
 ## Desplegar el Proyecto
 
-Para desplegar este proyecto, simplemente abre [Lovable](https://lovable.dev/projects/a454b7df-1162-44c4-95db-992cca315e5a) y haz clic en **Share -> Publish**.
-
-## ¿Puedo Usar un Dominio Personalizado?
-
-Actualmente, no soportamos dominios personalizados en Lovable. Si deseas desplegar tu proyecto en un dominio propio, te recomendamos usar [Netlify](https://www.netlify.com/). Puedes seguir nuestra guía para dominios personalizados aquí:  
-[Custom domains en Lovable](https://docs.lovable.dev/tips-tricks/custom-domain/)
-
----
+Para desplegar este proyecto en Vercel:
+1. Vercel es la plataforma de despliegue gratuita para proyectos de código abierto. Puedes crear una cuenta gratuita en [vercel.com](https://vercel.com).
+2. Haz clic en el botón "Import" en la parte superior derecha de la página de proyectos.
+3. Selecciona el botón "Import from GitHub" y sigue las instrucciones para importar el proyecto.
+4. Selecciona el botón "Deploy" para desplegar el proyecto.
 
 ## Contribuciones
 
