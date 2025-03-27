@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SNavbar from "@/components/SNavbar";
-import { User, Sprout } from "lucide-react"; // Importar los íconos
+import { User, Sprout, Plus } from "lucide-react"; // Importar los íconos
+import CreateFarmerGreenhouseForm from "@/components/FormFarmerGreenH";
 
 export default function DashboardFarm() {
   const navigate = useNavigate();
   const [greenhouses, setGreenhouses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchGreenhouses = async () => {
@@ -57,9 +59,11 @@ export default function DashboardFarm() {
       <SNavbar />
       <div className="flex-1 my-20">
         <div className="max-w-4xl mx-auto px-4 py-12">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Bienvenido a tu dashboard</h1>
-            <Sprout size={60} className="mr-96"/>
+          <div className="flex justify-between items-center mb-8 flex-wrap">
+            <h1 className="text-3xl font-bold flex-1">
+              Bienvenido a tu dashboard
+            </h1>
+            <Sprout size={60} className="mr-4 md:mr-16 mb-4 md:mb-0" />
             <Button
               variant="destructive"
               onClick={() => {
@@ -78,8 +82,31 @@ export default function DashboardFarm() {
             <div className="text-center text-red-500">{error}</div>
           ) : (
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Tus Invernaderos</h2>
-              {greenhouses.length === 0 ? (
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold">Tus Invernaderos</h2>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowForm(!showForm)}
+                  className="flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  {showForm ? "Cancelar" : "Crear Invernadero"}
+                </Button>
+              </div>
+              
+              {showForm && (
+                <div className="mb-6">
+                  <CreateFarmerGreenhouseForm 
+                    onCreateGreenhouse={(newGreenhouse) => {
+                      setGreenhouses([...greenhouses, newGreenhouse]);
+                      setShowForm(false);
+                    }}
+                    onCancel={() => setShowForm(false)}
+                  />
+                </div>
+              )}
+              
+              {greenhouses.length === 0 && !showForm ? (
                 <p>No tienes invernaderos asociados.</p>
               ) : (
                 <ul>
@@ -88,8 +115,8 @@ export default function DashboardFarm() {
                       key={greenhouse.id}
                       className="mb-4 p-4 border border-gray-200 rounded-lg bg-card"
                     >
-                      <div className="flex justify-between">
-                        <div>
+                      <div className="flex flex-wrap justify-between items-center">
+                        <div className="flex-1">
                           <p className="text-xl font-medium">
                             {greenhouse.name}
                           </p>
@@ -103,8 +130,10 @@ export default function DashboardFarm() {
                         <Button
                           variant="default"
                           onClick={() => {
-                            /* Redirigir o ver detalles del invernadero */
+                            // Redirigir al ESP32, pasando el ID del invernadero
+                            navigate(`/greenhouse/${greenhouse.id}`);
                           }}
+                          className="mt-2 sm:mt-0"
                         >
                           Ingresar
                         </Button>

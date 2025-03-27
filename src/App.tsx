@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuth from "./pages/NotAuth";
 import DashboardFarm from "./pages/DashboardFarm";
 import ManageDevices from "./components/ManageDevices";
+import GreenhouseControl from "./components/GreenhouseControl";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,11 @@ const App = () => (
 
           <Route element={<ProtectedRoute farmerOnly={true} />}>
             <Route path="/dashboard-farmer" element={<DashboardFarm />} />
+          </Route>
+          
+          {/* Ruta protegida específica para cada invernadero */}
+          <Route element={<ProtectedRoute farmerOnly={true} greenhouseProtection={true} />}>
+            <Route path="/greenhouse/:id" element={<GreenhouseControl />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
