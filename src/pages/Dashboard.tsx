@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SNavbar from "@/components/SNavbar";
 import { User, Sprout, Sparkles } from "lucide-react"; // Importar los íconos
+import { apiGet } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -21,22 +23,12 @@ export default function Dashboard() {
 
     const fetchData = async () => {
       try {
-        const usersResponse = await fetch("http://localhost:5000/api/users", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const greenhousesResponse = await fetch(
-          "http://localhost:5000/api/greenhouses",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const usersData = await apiGet(ENDPOINTS.USERS);
+        const greenhousesData = await apiGet(ENDPOINTS.GREENHOUSES);
 
-        if (!usersResponse.ok || !greenhousesResponse.ok) {
+        if (!usersData || !greenhousesData) {
           throw new Error("Error al obtener datos.");
         }
-
-        const usersData = await usersResponse.json();
-        const greenhousesData = await greenhousesResponse.json();
 
         setUsers(usersData);
         setGreenhouses(greenhousesData);

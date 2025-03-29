@@ -19,7 +19,7 @@ function authenticateJWT(req, res, next) {
       .json({ message: "Acceso denegado. No se proporcionó el token." });
   }
 
-  jwt.verify(token, "tu_clave_secreta", (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       return res.status(403).json({ message: "Token inválido" });
     }
@@ -50,17 +50,14 @@ pool.query("SELECT NOW()", (err, res) => {
 // Rutas de autenticación
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("Recibiendo datos:", email);
-
   try {
     const userResult = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email]
     );
-    console.log("Resultado de la consulta:", userResult.rows);
 
     if (userResult.rows.length === 0) {
-      console.log("Usuario no encontrado");
+      // Usuario no encontrado
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
@@ -74,7 +71,7 @@ app.post("/api/auth/login", async (req, res) => {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-    console.log("¿Contraseña válida?", isPasswordValid);
+    // Verificación de contraseña
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Credenciales inválidas" });
@@ -85,7 +82,7 @@ app.post("/api/auth/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
-    console.log("Token generado:", token);
+    // Token generado correctamente
 
     res.json({
       token,
@@ -435,5 +432,5 @@ app.post("/api/sensordata", async (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+  console.log(`Servidor ejecutándose en el puerto ${PORT}`);
 });

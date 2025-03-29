@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { apiPost } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 const CreateFarmerGreenhouseForm = ({ onCreateGreenhouse, onCancel }) => {
   const [name, setName] = useState("");
@@ -32,22 +34,13 @@ const CreateFarmerGreenhouseForm = ({ onCreateGreenhouse, onCancel }) => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/greenhouses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name,
-          location,
-          user_id: userId, // Usar el ID del usuario autenticado
-        }),
+      const newGreenhouse = await apiPost(ENDPOINTS.GREENHOUSES, {
+        name,
+        location,
+        user_id: userId, // Usar el ID del usuario autenticado
       });
 
-      if (!response.ok) throw new Error("Error al crear el invernadero");
-
-      const newGreenhouse = await response.json();
+      if (!newGreenhouse) throw new Error("Error al crear el invernadero");
       onCreateGreenhouse(newGreenhouse);
     } catch (err) {
       setError(err.message);

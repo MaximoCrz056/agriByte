@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import CreateGreenhouseForm from "./FormGreenH";
 import { X } from "lucide-react";
+import { apiGet, apiDelete } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 const ManageGreenhouses = () => {
   const [greenhouses, setGreenhouses] = useState([]);
@@ -17,14 +19,9 @@ const ManageGreenhouses = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const response = await fetch("http://localhost:5000/api/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const data = await apiGet(ENDPOINTS.USERS);
 
-        if (!response.ok) throw new Error("Error al obtener usuarios");
-        const data = await response.json();
+        if (!data) throw new Error("Error al obtener usuarios");
         setUsers(data); // Guardamos los usuarios en el estado
       } catch (err) {
         setError(err.message);
@@ -39,13 +36,8 @@ const ManageGreenhouses = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const response = await fetch("http://localhost:5000/api/greenhouses", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) throw new Error("Error al obtener invernaderos");
-        const data = await response.json();
+        const data = await apiGet(ENDPOINTS.GREENHOUSES);
+        if (!data) throw new Error("Error al obtener invernaderos");
         setGreenhouses(data);
       } catch (err) {
         setError(err.message);
@@ -67,15 +59,7 @@ const ManageGreenhouses = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/greenhouses/${greenhouseId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiDelete(`${ENDPOINTS.GREENHOUSES}/${greenhouseId}`);
 
       if (!response.ok) throw new Error("Error al eliminar invernadero");
 

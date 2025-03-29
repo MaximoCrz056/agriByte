@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import SNavbar from "@/components/SNavbar";
 import { User, Sprout, Plus } from "lucide-react"; // Importar los íconos
 import CreateFarmerGreenhouseForm from "@/components/FormFarmerGreenH";
+import { apiGet } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 export default function DashboardFarm() {
   const navigate = useNavigate();
@@ -18,15 +20,9 @@ export default function DashboardFarm() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch("http://localhost:5000/api/greenhouses", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const data = await apiGet(ENDPOINTS.GREENHOUSES);
 
-        if (!response.ok) throw new Error("Error al obtener invernaderos");
-
-        const data = await response.json();
+        if (!data) throw new Error("Error al obtener invernaderos");
 
         // Obtener el user_id del usuario autenticado desde el localStorage
         const user = JSON.parse(localStorage.getItem("user"));

@@ -3,6 +3,8 @@ import { Navigate, Outlet, useParams } from "react-router-dom";
 import { getUserRole, getUserId } from "@/lib/auth"; // Obtener rol y ID del usuario
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 export default function ProtectedRoute({
   adminOnly = false,
@@ -21,15 +23,9 @@ export default function ProtectedRoute({
     if (greenhouseProtection && id && userId) {
       const checkGreenhouseOwnership = async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/greenhouses/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const greenhouse = await apiGet(`${ENDPOINTS.GREENHOUSES}/${id}`);
           
-          if (!response.ok) throw new Error("Error al verificar propiedad del invernadero");
-          
-          const greenhouse = await response.json();
+          if (!greenhouse) throw new Error("Error al verificar propiedad del invernadero");
           
           // Verificar si el usuario es el propietario del invernadero
           if (greenhouse.user_id === userId) {

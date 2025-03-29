@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import CreateUserForm from "./FormUsers"; // Asegúrate de importar el formulario
 import { X } from "lucide-react"; // Importar el ícono de "X"
+import { apiGet, apiDelete } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
+
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -15,13 +18,8 @@ const ManageUsers = () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const response = await fetch("http://localhost:5000/api/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) throw new Error("Error al obtener usuarios");
-        const data = await response.json();
+        const data = await apiGet(ENDPOINTS.USERS);
+        if (!data) throw new Error("Error al obtener usuarios");
 
         // Filtrar usuarios para excluir los admins
         const filteredUsers = data.filter((user) => user.role !== "admin");
@@ -45,16 +43,7 @@ const ManageUsers = () => {
     const token = localStorage.getItem("token");
     if (!token) return; // Si no hay token, no se puede hacer la petición
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/users/${userId}`, // URL de la API para eliminar el usuario
-        {
-          // Objeto de opciones para la petición
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }, // Incluir el token en los headers de la petición
-        }
-      ); // Llamar a la API para eliminar el usuario
+      const response = await apiDelete(`${ENDPOINTS.USERS}/${userId}`); // Llamar a la API para eliminar el usuario
       if (!response.ok) throw new Error("Error al eliminar usuario"); // Si la petición falla, lanzar un error
       setUsers(users.filter((user) => user.id !== userId)); // Eliminar el usuario de la lista
     } catch (err) {

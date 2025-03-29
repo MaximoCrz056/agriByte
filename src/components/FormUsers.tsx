@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { apiPost } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 const CreateUserForm = ({ onCreateUser }) => {
   const [username, setUsername] = useState("");
@@ -33,17 +35,9 @@ const CreateUserForm = ({ onCreateUser }) => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
-      });
+      const result = await apiPost(ENDPOINTS.USERS, newUser);
 
-      if (!response.ok) throw new Error("Error al crear usuario");
-
-      const result = await response.json();
+      if (!result) throw new Error("Error al crear usuario");
       console.log("Usuario creado:", result);
 
       // Limpiar el formulario y manejar el estado del nuevo usuario

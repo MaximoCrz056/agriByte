@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Sprout, Thermometer, Droplets, ArrowLeft } from "lucide-react";
 import SNavbar from "./SNavbar";
 import mqtt from "mqtt";
+import { apiGet } from "@/lib/apiUtils";
+import { ENDPOINTS } from "@/lib/config";
 
 export default function GreenhouseControl() {
   const navigate = useNavigate();
@@ -126,14 +128,7 @@ export default function GreenhouseControl() {
 
     const fetchGreenhouseData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/greenhouses/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await apiGet(`${ENDPOINTS.GREENHOUSES}/${id}`);
       } catch (error) {
         setError(error.message);
       } finally {
