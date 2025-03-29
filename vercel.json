@@ -10,25 +10,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "headers": [
-    {
-      "source": "/(.*)\\.js",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.mjs",
-      "headers": [
-        { "key": "Content-Type", "value": "text/javascript" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.ts",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript" }
-      ]
-    }
-  ]
+  }
 }
