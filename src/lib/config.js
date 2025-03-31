@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 // URL base de la API según el entorno
 export const API_BASE_URL = isProduction 
-  ? 'https://agri-byte.vercel.app/' // URL de producción (cambiar por la URL real en producción)
+  ? 'https://https://oxbiapcwfjnnlszugcaf.supabase.co/' // URL de producción (cambiar por la URL real en producción)
   : 'http://localhost:5000';
 
 // Endpoints de la API
