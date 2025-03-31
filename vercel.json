@@ -1,7 +1,19 @@
 {
-  "version": 2,
-  "routes": [
-    { "src": "/api/(.*)", "dest": "server.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
+    "version": "0.13.0",
+    "description": "A modern replacement for Vim, focusing on extensibility and usability.",
+    "homepage": "https://github.com/cosmic-cthulhu/cosmic-citrus",
+    "repository": "https://github.com/cosmic-cthulhu/cosmic-citrus",
+    "outputDirectory": "build",
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/next"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
+    ]
 }
