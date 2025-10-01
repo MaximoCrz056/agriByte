@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { ENDPOINTS, getApiUrl } from '@/lib/config';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { loginWithSupabase } from "@/lib/utils/auth";
 import {
   Form,
   FormControl,
@@ -13,27 +13,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import SNavbar from '@/components/SNavbar';
-import Footer from '@/components/Footer';
+} from "@/components/ui/form";
+import SNavbar from "@/components/SNavbar";
+import Footer from "@/components/Footer";
 
 // Define form validation schema
+
 const loginSchema = z.object({
-  email: z.string().email('Correo electrónico inválido'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  username: z.string().min(3, "El usuario debe tener al menos 3 caracteres"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
-  
+
   // Initialize form with validation
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: ''
+      username: "",
+      password: "",
     },
   });
 
@@ -45,37 +46,31 @@ export default function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     setError(null);
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch(getApiUrl(ENDPOINTS.LOGIN), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.message || 'Error al iniciar sesión');
-      }
-      
+      const result = await loginWithSupabase(data.username, data.password);
+      console.log("Resultado del login:", result); // Para depuración
+
       // Guardar el token en localStorage
-      localStorage.setItem('token', result.token);
-      //Guardar el usuario en localStorage con id, email y role
-      localStorage.setItem('user', JSON.stringify(result.user));
-      
+      localStorage.setItem("token", result.token);
+      //Guardar el usuario en localStorage con id, username y role
+      localStorage.setItem("user", JSON.stringify(result.user));
+
+      console.log("Rol del usuario:", result.user.role); // Para depuración
+
       // Redirigir al dashboard
-      if (result.user.role === 'farmer') {
-        navigate('/dashboard-farmer');
-      } else if (result.user.role === 'admin'){
-        navigate('/dashboard');
+      if (result.user.role === "farmer") {
+        console.log("Redirigiendo a dashboard-farmer");
+        navigate("/dashboard-farmer");
+      } else if (result.user.role === "admin") {
+        console.log("Redirigiendo a dashboard");
+        navigate("/dashboard");
       } else {
-        navigate('/not-auth');
+        console.log("Redirigiendo a not-auth");
+        navigate("/not-auth");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
       setIsLoading(false);
     }
@@ -88,29 +83,27 @@ export default function Login() {
         <div className="max-w-md w-full px-4">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
-            <p className="text-muted-foreground mt-2">Ingresa tus credenciales para acceder</p>
+            <p className="text-muted-foreground mt-2">
+              Ingresa tus credenciales para acceder
+            </p>
           </div>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormLabel>Usuario</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="correo@ejemplo.com" 
-                        type="email" 
-                        {...field} 
-                      />
+                      <Input placeholder="usuario123" type="text" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="password"
@@ -118,25 +111,25 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Contraseña</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="******" 
-                        type="password" 
-                        {...field} 
-                      />
+                      <Input placeholder="******" type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               {error && (
                 <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md mt-2">
                   {error}
                 </div>
               )}
-              
-              <Button type="submit" className="w-full mt-6" disabled={isLoading}>
-                {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+
+              <Button
+                type="submit"
+                className="w-full mt-6"
+                disabled={isLoading}
+              >
+                {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </Button>
             </form>
           </Form>

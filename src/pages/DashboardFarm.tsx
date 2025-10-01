@@ -2,47 +2,58 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SNavbar from "@/components/SNavbar";
-import { User, Sprout, Plus } from "lucide-react"; // Importar los íconos
+import { User, Sprout, Plus } from "lucide-react";
 import CreateFarmerGreenhouseForm from "@/components/FormFarmerGreenH";
-import { apiGet } from "@/lib/apiUtils";
-import { ENDPOINTS } from "@/lib/config";
+import { supabase } from "@/lib/utils/supabaseClient";
+import type { Greenhouse } from "@/lib/types";
 
 export default function DashboardFarm() {
   const navigate = useNavigate();
-  const [greenhouses, setGreenhouses] = useState([]);
+  const [greenhouses, setGreenhouses] = useState<Greenhouse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchGreenhouses = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const data = await apiGet(ENDPOINTS.GREENHOUSES);
-
-        if (!data) throw new Error("Error al obtener invernaderos");
-
         // Obtener el user_id del usuario autenticado desde el localStorage
-        const user = JSON.parse(localStorage.getItem("user"));
-        const userId = user ? user.id : null;
+        const userStr = localStorage.getItem("user");
+        if (!userStr) {
+          navigate("/login");
+          return;
+        }
 
-        // Filtrar los invernaderos donde el user_id coincida con el id del usuario autenticado
-        const userGreenhouses = data.filter(
-          (greenhouse) => greenhouse.user_id === userId
-        );
+        const user = JSON.parse(userStr);
+        if (!user.id) {
+          throw new Error("ID de usuario no encontrado");
+        }
 
-        setGreenhouses(userGreenhouses);
+        // Obtener invernaderos del usuario desde Supabase
+        const { data: userGreenhouses, error: supaError } = await supabase
+          .from("greenhouses")
+          .select("*")
+          .eq("user_id", user.id);
+
+        if (supaError) {
+          throw new Error(
+            `Error al obtener invernaderos: ${supaError.message}`
+          );
+        }
+
+        setGreenhouses(userGreenhouses || []);
       } catch (err) {
-        setError(err.message);
+        console.error("Error:", err);
+        setError(
+          err instanceof Error ? err.message : "Error al obtener invernaderos"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchGreenhouses();
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -80,8 +91,8 @@ export default function DashboardFarm() {
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold">Tus Invernaderos</h2>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setShowForm(!showForm)}
                   className="flex items-center gap-2"
                 >
@@ -89,10 +100,10 @@ export default function DashboardFarm() {
                   {showForm ? "Cancelar" : "Crear Invernadero"}
                 </Button>
               </div>
-              
+
               {showForm && (
                 <div className="mb-6">
-                  <CreateFarmerGreenhouseForm 
+                  <CreateFarmerGreenhouseForm
                     onCreateGreenhouse={(newGreenhouse) => {
                       setGreenhouses([...greenhouses, newGreenhouse]);
                       setShowForm(false);
@@ -101,7 +112,7 @@ export default function DashboardFarm() {
                   />
                 </div>
               )}
-              
+
               {greenhouses.length === 0 && !showForm ? (
                 <p>No tienes invernaderos asociados.</p>
               ) : (

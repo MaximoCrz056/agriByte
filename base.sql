@@ -1,109 +1,99 @@
--- Tabla de Usuarios
-CREATE TABLE Users (
+-- Migrations will appear here as you chat with AI
+create table users (
     id bigint primary key generated always as identity,
-    username text UNIQUE NOT NULL,
-    password_hash text NOT NULL,
-    role text CHECK (role IN ('admin', 'farmer', 'viewer')) DEFAULT 'farmer',
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP
+    username text unique not null,
+    password_hash text not null,
+    role text check (role in ('admin', 'farmer', 'viewer')) default 'farmer',
+    created_at timestamp default current_timestamp
 );
--- Tabla de Invernaderos
-CREATE TABLE Greenhouses (
+create table greenhouses (
     id bigint primary key generated always as identity,
-    user_id bigint NOT NULL,
-    name text NOT NULL,
+    user_id bigint not null,
+    name text not null,
     location text,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(id)
+    created_at timestamp default current_timestamp,
+    foreign key (user_id) references users (id)
 );
--- Tabla de Semillas
-CREATE TABLE Seeds (
+create table seeds (
     id bigint primary key generated always as identity,
-    seed_name text NOT NULL,
+    seed_name text not null,
     scientific_name text,
     description text,
     days_to_harvest int,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP
+    created_at timestamp default current_timestamp
 );
--- Tabla de Áreas de Semilla
-CREATE TABLE SeedAreas (
+create table seedareas (
     id bigint primary key generated always as identity,
-    greenhouse_id bigint NOT NULL,
-    seed_id bigint NOT NULL,
-    name text NOT NULL,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (greenhouse_id) REFERENCES Greenhouses(id),
-    FOREIGN KEY (seed_id) REFERENCES Seeds(id)
+    greenhouse_id bigint not null,
+    seed_id bigint not null,
+    name text not null,
+    created_at timestamp default current_timestamp,
+    foreign key (greenhouse_id) references greenhouses (id),
+    foreign key (seed_id) references seeds (id)
 );
--- Tabla de Dispositivos
-CREATE TABLE Devices (
+create table devices (
     id bigint primary key generated always as identity,
-    sensor_type text CHECK (sensor_type IN ('suelo', 'ambiente')) NOT NULL,
+    sensor_type text check (sensor_type in ('suelo', 'ambiente')) not null,
     location text,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp DEFAULT CURRENT_TIMESTAMP
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp
 );
--- Tabla de Asignaciones de Dispositivos
-CREATE TABLE DeviceAssignments (
+create table deviceassignments (
     id bigint primary key generated always as identity,
-    seed_area_id bigint NOT NULL,
-    sensor_id bigint NOT NULL,
-    assigned_at timestamp DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (seed_area_id) REFERENCES SeedAreas(id),
-    FOREIGN KEY (sensor_id) REFERENCES Devices(id)
+    seed_area_id bigint not null,
+    sensor_id bigint not null,
+    assigned_at timestamp default current_timestamp,
+    foreign key (seed_area_id) references seedareas (id),
+    foreign key (sensor_id) references devices (id)
 );
--- Tabla de Datos de Dispositivos
-CREATE TABLE DeviceData (
+create table devicedata (
     id bigint primary key generated always as identity,
     sensor_id bigint,
-    timestamp timestamp DEFAULT CURRENT_TIMESTAMP,
-    soil_moisture decimal(5, 2),
-    air_humidity decimal(5, 2),
-    temperature decimal(5, 2),
-    FOREIGN KEY (sensor_id) REFERENCES Devices(id)
+    "timestamp" timestamp default current_timestamp,
+    soil_moisture numeric(5, 2),
+    air_humidity numeric(5, 2),
+    temperature numeric(5, 2),
+    foreign key (sensor_id) references devices (id)
 );
--- Tabla de Parámetros Ideales por Semilla
-CREATE TABLE SeedParameters (
+create table seedparameters (
     id bigint primary key generated always as identity,
-    seed_id bigint NOT NULL,
-    min_soil_moisture decimal(5, 2),
-    max_soil_moisture decimal(5, 2),
-    min_air_humidity decimal(5, 2),
-    max_air_humidity decimal(5, 2),
-    min_temperature decimal(5, 2),
-    max_temperature decimal(5, 2),
+    seed_id bigint not null,
+    min_soil_moisture numeric(5, 2),
+    max_soil_moisture numeric(5, 2),
+    min_air_humidity numeric(5, 2),
+    max_air_humidity numeric(5, 2),
+    min_temperature numeric(5, 2),
+    max_temperature numeric(5, 2),
     daily_water_ml int,
     sun_exposure_hours int,
-    FOREIGN KEY (seed_id) REFERENCES Seeds(id)
+    foreign key (seed_id) references seeds (id)
 );
--- Tabla de Modos de Operación
-CREATE TABLE Modes (
+create table modes (
     id bigint primary key generated always as identity,
-    mode_name text NOT NULL,
+    mode_name text not null,
     description text,
-    seed_id bigint NOT NULL,
+    seed_id bigint not null,
     conditions json,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (seed_id) REFERENCES Seeds(id)
+    created_at timestamp default current_timestamp,
+    foreign key (seed_id) references seeds (id)
 );
--- Tabla de Alertas
-CREATE TABLE Alerts (
+create table alerts (
     id bigint primary key generated always as identity,
-    seed_area_id bigint NOT NULL,
-    sensor_data_id bigint NOT NULL,
+    seed_area_id bigint not null,
+    sensor_data_id bigint not null,
     message text,
-    severity text CHECK (severity IN ('info', 'warning', 'critical')),
-    resolved boolean DEFAULT FALSE,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (seed_area_id) REFERENCES SeedAreas(id),
-    FOREIGN KEY (sensor_data_id) REFERENCES DeviceData(id)
+    severity text check (severity in ('info', 'warning', 'critical')),
+    resolved boolean default false,
+    created_at timestamp default current_timestamp,
+    foreign key (seed_area_id) references seedareas (id),
+    foreign key (sensor_data_id) references devicedata (id)
 );
--- Tabla de Riego Programado
-CREATE TABLE IrrigationSchedule (
+create table irrigationschedule (
     id bigint primary key generated always as identity,
-    seed_id bigint NOT NULL,
+    seed_id bigint not null,
     start_time time,
     frequency_hours int,
     water_amount_ml int,
-    enabled boolean DEFAULT TRUE,
-    FOREIGN KEY (seed_id) REFERENCES Seeds(id)
+    enabled boolean default true,
+    foreign key (seed_id) references seeds (id)
 );

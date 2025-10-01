@@ -24,9 +24,10 @@ export default function ProtectedRoute({
       const checkGreenhouseOwnership = async () => {
         try {
           const greenhouse = await apiGet(`${ENDPOINTS.GREENHOUSES}/${id}`);
-          
-          if (!greenhouse) throw new Error("Error al verificar propiedad del invernadero");
-          
+
+          if (!greenhouse)
+            throw new Error("Error al verificar propiedad del invernadero");
+
           // Verificar si el usuario es el propietario del invernadero
           if (greenhouse.user_id === userId) {
             setIsAuthorized(true);
@@ -40,7 +41,7 @@ export default function ProtectedRoute({
           setLoading(false);
         }
       };
-      
+
       checkGreenhouseOwnership();
     }
   }, [greenhouseProtection, id, userId, token]);

@@ -3,29 +3,32 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import CreateUserForm from "./FormUsers"; // Asegúrate de importar el formulario
 import { X } from "lucide-react"; // Importar el ícono de "X"
-import { apiGet, apiDelete } from "@/lib/apiUtils";
-import { ENDPOINTS } from "@/lib/config";
-
+import { supabase } from "@/lib/utils/supabaseClient";
+import type { User } from "@/lib/types";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [showCreateUserForm, setShowCreateUserForm] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const data = await apiGet(ENDPOINTS.USERS);
-        if (!data) throw new Error("Error al obtener usuarios");
+        const { data: usersData, error: supaError } = await supabase
+          .from("users")
+          .select("*")
+          .neq("role", "admin");
 
-        // Filtrar usuarios para excluir los admins
-        const filteredUsers = data.filter((user) => user.role !== "admin");
-        setUsers(filteredUsers);
+        if (supaError) {
+          throw new Error(`Error al obtener usuarios: ${supaError.message}`);
+        }
+
+        setUsers(usersData || []);
       } catch (err) {
-        setError(err.message);
+        setError(
+          err instanceof Error ? err.message : "Error al obtener usuarios"
+        );
       } finally {
         setLoading(false);
       }
@@ -39,15 +42,22 @@ const ManageUsers = () => {
     setShowCreateUserForm(false); // Ocultar el formulario después de crear el usuario
   };
 
-  const handleDeleteUser = async (userId) => {
-    const token = localStorage.getItem("token");
-    if (!token) return; // Si no hay token, no se puede hacer la petición
+  const handleDeleteUser = async (userId: number) => {
     try {
-      const response = await apiDelete(`${ENDPOINTS.USERS}/${userId}`); // Llamar a la API para eliminar el usuario
-      if (!response.ok) throw new Error("Error al eliminar usuario"); // Si la petición falla, lanzar un error
-      setUsers(users.filter((user) => user.id !== userId)); // Eliminar el usuario de la lista
+      const { error: deleteError } = await supabase
+        .from("users")
+        .delete()
+        .eq("id", userId);
+
+      if (deleteError) {
+        throw new Error(`Error al eliminar usuario: ${deleteError.message}`);
+      }
+
+      setUsers(users.filter((user) => user.id !== userId));
     } catch (err) {
-      setError(err.message); // Mostrar un mensaje de error en caso de error
+      setError(
+        err instanceof Error ? err.message : "Error al eliminar usuario"
+      );
     }
   };
 
@@ -106,10 +116,8 @@ const ManageUsers = () => {
                       Creado el: {user.created_at}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Correo: {user.email}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Última vez activo: {user.last_login}
+                      Fecha de creación:{" "}
+                      {new Date(user.created_at).toLocaleString()}
                     </p>
                   </div>
                   <button

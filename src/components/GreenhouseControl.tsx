@@ -4,14 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Sprout, Thermometer, Droplets, ArrowLeft } from "lucide-react";
 import SNavbar from "./SNavbar";
 import mqtt from "mqtt";
-import { apiGet } from "@/lib/apiUtils";
-import { ENDPOINTS } from "@/lib/config";
+import { supabase } from "@/lib/utils/supabaseClient";
+import type { Greenhouse } from "@/lib/types";
+
+interface SensorData {
+  temperatura: string;
+  humedad: string;
+  humedad_suelo: string;
+  humedad_suelo_porcentaje: string;
+  estado_calefaccion: string;
+  estado_servo: string;
+}
 
 export default function GreenhouseControl() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [greenhouse, setGreenhouse] = useState(null);
-  const [sensorData, setSensorData] = useState({
+  const [greenhouse, setGreenhouse] = useState<Greenhouse | null>(null);
+  const [sensorData, setSensorData] = useState<SensorData>({
     temperatura: "---",
     humedad: "---",
     humedad_suelo: "---",
@@ -20,19 +29,20 @@ export default function GreenhouseControl() {
     estado_servo: "---",
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isActionInProgress, setIsActionInProgress] = useState(false);
-  const [mqttClient, setMqttClient] = useState(null);
-  const [lightStatus, setLightStatus] = useState("Desconocido");
-  const [servoStatus, setServoStatus] = useState("Desconocido");
-  const [connectionStatus, setConnectionStatus] = useState("Desconectado");
+  const [mqttClient, setMqttClient] = useState<mqtt.MqttClient | null>(null);
+  const [lightStatus, setLightStatus] = useState<string>("Desconocido");
+  const [servoStatus, setServoStatus] = useState<string>("Desconocido");
+  const [connectionStatus, setConnectionStatus] =
+    useState<string>("Desconectado");
 
   useEffect(() => {
     // Configuración MQTT con credenciales
-    const options = {
+    const options: mqtt.IClientOptions = {
       username: "hivemq.webclient.1742277525146",
       password: "NkO.?p1,2e0VrAB$6abK",
-      protocol: "wss",
+      protocol: "wss" as mqtt.MqttProtocol,
       clientId: `greenhouse_web_${Math.random().toString(16).substr(2, 8)}`,
       reconnectPeriod: 5000,
     };
@@ -82,7 +92,10 @@ export default function GreenhouseControl() {
 
       if (topic === `greenhouse/luces` || topic === `greenhouse/luces/estado`) {
         setLightStatus(messageStr);
-      } else if (topic === `greenhouse/servo` || topic === `greenhouse/servo/estado`) {
+      } else if (
+        topic === `greenhouse/servo` ||
+        topic === `greenhouse/servo/estado`
+      ) {
         setServoStatus(messageStr);
       } else if (topic === `greenhouse/sensores`) {
         try {
@@ -128,16 +141,50 @@ export default function GreenhouseControl() {
 
     const fetchGreenhouseData = async () => {
       try {
-        const response = await apiGet(`${ENDPOINTS.GREENHOUSES}/${id}`);
-      } catch (error) {
-        setError(error.message);
+        const { data: greenhouse, error: supaError } = await supabase
+          .from("greenhouses")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (supaError) {
+          throw new Error(
+            `Error al obtener datos del invernadero: ${supaError.message}`
+          );
+        }
+
+        if (!greenhouse) {
+          throw new Error("Invernadero no encontrado");
+        }
+
+        // Verificar permisos
+        const userStr = localStorage.getItem("user");
+        if (!userStr) {
+          navigate("/login");
+          return;
+        }
+
+        const user = JSON.parse(userStr);
+        if (user.role !== "admin" && greenhouse.user_id !== user.id) {
+          navigate("/not-auth");
+          return;
+        }
+
+        setGreenhouse(greenhouse);
+      } catch (err) {
+        console.error("Error:", err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Error al obtener datos del invernadero"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchGreenhouseData();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleControlAction = async (action) => {
     setIsActionInProgress(true);
@@ -393,9 +440,7 @@ export default function GreenhouseControl() {
               <div className="flex items-center p-4 bg-blue-50 rounded-lg">
                 <Droplets className="text-green-500 mr-4" size={32} />
                 <div>
-                  <p className="text-sm text-gray-500">
-                    Humedad del Suelo
-                  </p>
+                  <p className="text-sm text-gray-500">Humedad del Suelo</p>
                   <p className="text-xl font-bold">
                     {sensorData.humedad_suelo}
                   </p>
@@ -411,7 +456,7 @@ export default function GreenhouseControl() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center p-4 bg-blue-50 rounded-lg">
                 <Sprout className="text-blue-500 mr-4" size={32} />
                 <div>

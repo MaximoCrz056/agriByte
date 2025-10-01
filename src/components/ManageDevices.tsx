@@ -3,28 +3,33 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import CreateDeviceForm from "./FormDevices";
 import { X } from "lucide-react";
+import { supabase } from "@/lib/utils/supabaseClient";
+import type { Device } from "@/lib/types";
 
 const ManageDevices = () => {
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateDeviceForm, setShowCreateDeviceForm] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDevices = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const response = await fetch("http://localhost:5000/api/devices", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) throw new Error("Error al obtener dispositivos");
-        const data = await response.json();
-        setDevices(data);
+        const { data: devicesData, error: devicesError } = await supabase
+          .from("devices")
+          .select("*");
+
+        if (devicesError) {
+          throw new Error(
+            `Error al obtener dispositivos: ${devicesError.message}`
+          );
+        }
+
+        setDevices(devicesData || []);
       } catch (err) {
-        setError(err.message);
+        setError(
+          err instanceof Error ? err.message : "Error al obtener dispositivos"
+        );
       } finally {
         setLoading(false);
       }
@@ -37,27 +42,24 @@ const ManageDevices = () => {
     setShowCreateDeviceForm(false);
   };
 
-  const handleDeleteDevice = async (deviceId) => {
+  const handleDeleteDevice = async (deviceId: number) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+      const { error: deleteError } = await supabase
+        .from("devices")
+        .delete()
+        .eq("id", deviceId);
 
-      const response = await fetch(
-        `http://localhost:5000/api/devices/${deviceId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (deleteError) {
+        throw new Error(
+          `Error al eliminar dispositivo: ${deleteError.message}`
+        );
+      }
 
-      if (!response.ok) throw new Error("Error al eliminar dispositivo");
-      setDevices((prevDevices) =>
-        prevDevices.filter((device) => device.id !== deviceId)
-      );
+      setDevices(devices.filter((device) => device.id !== deviceId));
     } catch (err) {
-      setError(err.message);
+      setError(
+        err instanceof Error ? err.message : "Error al eliminar dispositivo"
+      );
     }
   };
 

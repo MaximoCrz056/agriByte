@@ -1,25 +1,26 @@
 export const getUserRole = () => {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-
   try {
-    const payload = JSON.parse(atob(token.split(".")[1])); // Decodificar el payload del JWT
-    return payload.role || null; // Retornar el rol si existe
+    const userStr = localStorage.getItem("user");
+    if (!userStr) return null;
+
+    const user = JSON.parse(userStr);
+    console.log("Usuario desde localStorage:", user); // Para depuración
+    return user.role || null;
   } catch (error) {
-    console.error("Error al decodificar el token:", error);
+    console.error("Error al obtener rol del usuario:", error);
     return null;
   }
 };
 
 export const getUserId = () => {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-
   try {
-    const payload = JSON.parse(atob(token.split(".")[1])); // Decodificar el payload del JWT
-    return payload.user_id || null; // Retornar el ID del usuario si existe
+    const userStr = localStorage.getItem("user");
+    if (!userStr) return null;
+
+    const user = JSON.parse(userStr);
+    return user.id || null;
   } catch (error) {
-    console.error("Error al decodificar el token:", error);
+    console.error("Error al obtener ID del usuario:", error);
     return null;
   }
 };

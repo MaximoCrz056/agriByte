@@ -3,50 +3,49 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import CreateGreenhouseForm from "./FormGreenH";
 import { X } from "lucide-react";
-import { apiGet, apiDelete } from "@/lib/apiUtils";
-import { ENDPOINTS } from "@/lib/config";
+import { supabase } from "@/lib/utils/supabaseClient";
+import type { Greenhouse, User } from "@/lib/types";
 
 const ManageGreenhouses = () => {
-  const [greenhouses, setGreenhouses] = useState([]);
+  const [greenhouses, setGreenhouses] = useState<Greenhouse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [showCreateGreenhouseForm, setShowCreateGreenhouseForm] =
     useState(false);
-  const [users, setUsers] = useState([]); // Estado para almacenar los usuarios
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const data = await apiGet(ENDPOINTS.USERS);
+        // Obtener usuarios
+        const { data: usersData, error: usersError } = await supabase
+          .from("users")
+          .select("*");
 
-        if (!data) throw new Error("Error al obtener usuarios");
-        setUsers(data); // Guardamos los usuarios en el estado
+        if (usersError) {
+          throw new Error(`Error al obtener usuarios: ${usersError.message}`);
+        }
+
+        // Obtener invernaderos
+        const { data: greenhousesData, error: greenhousesError } =
+          await supabase.from("greenhouses").select("*");
+
+        if (greenhousesError) {
+          throw new Error(
+            `Error al obtener invernaderos: ${greenhousesError.message}`
+          );
+        }
+
+        setUsers(usersData || []);
+        setGreenhouses(greenhousesData || []);
       } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    const fetchGreenhouses = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const data = await apiGet(ENDPOINTS.GREENHOUSES);
-        if (!data) throw new Error("Error al obtener invernaderos");
-        setGreenhouses(data);
-      } catch (err) {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : "Error al obtener datos");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchGreenhouses();
+    fetchData();
   }, []);
 
   const handleCreateGreenhouse = (newGreenhouse) => {
@@ -54,26 +53,32 @@ const ManageGreenhouses = () => {
     setShowCreateGreenhouseForm(false); // Ocultar el formulario después de crear el invernadero
   };
 
-  const handleDeleteGreenhouse = async (greenhouseId) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
+  const handleDeleteGreenhouse = async (greenhouseId: number) => {
     try {
-      const response = await apiDelete(`${ENDPOINTS.GREENHOUSES}/${greenhouseId}`);
+      const { error: deleteError } = await supabase
+        .from("greenhouses")
+        .delete()
+        .eq("id", greenhouseId);
 
-      if (!response.ok) throw new Error("Error al eliminar invernadero");
+      if (deleteError) {
+        throw new Error(
+          `Error al eliminar invernadero: ${deleteError.message}`
+        );
+      }
 
       setGreenhouses(
         greenhouses.filter((greenhouse) => greenhouse.id !== greenhouseId)
       );
     } catch (err) {
-      setError(err.message);
+      setError(
+        err instanceof Error ? err.message : "Error al eliminar invernadero"
+      );
     }
   };
 
-  const getUserEmailById = (userId) => {
+  const getUsernameById = (userId: number) => {
     const user = users.find((user) => user.id === userId);
-    return user ? user.email : "Usuario no encontrado"; // Devolver el correo del usuario
+    return user ? user.username : "Usuario no encontrado";
   };
 
   return (
@@ -129,7 +134,7 @@ const ManageGreenhouses = () => {
                       Ubicación: {greenhouse.location.toUpperCase()}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Propietario: {getUserEmailById(greenhouse.user_id)}
+                      Propietario: {getUsernameById(greenhouse.user_id)}
                     </p>
                     <p className="text-sm text-gray-500">
                       Creado el: {greenhouse.created_at}

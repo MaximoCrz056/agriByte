@@ -2,39 +2,91 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SNavbar from "@/components/SNavbar";
-import { User, Sprout, Sparkles } from "lucide-react"; // Importar los íconos
-import { apiGet } from "@/lib/apiUtils";
-import { ENDPOINTS } from "@/lib/config";
+import { User, Sprout, Sparkles } from "lucide-react";
+import { supabase } from "@/lib/utils/supabaseClient";
+
+interface User {
+  id: number;
+  username: string;
+  role: string;
+  created_at: string;
+}
+
+interface Greenhouse {
+  id: number;
+  name: string;
+  location: string;
+  user_id: number;
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
-  const [greenhouses, setGreenhouses] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [greenhouses, setGreenhouses] = useState<Greenhouse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetching users and greenhouses
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      const userStr = localStorage.getItem("user");
+
+      if (!token || !userStr) {
+        navigate("/login");
+        return false;
+      }
+
+      const user = JSON.parse(userStr);
+      if (user.role !== "admin") {
+        navigate("/not-auth");
+        return false;
+      }
+
+      return true;
+    };
 
     const fetchData = async () => {
-      try {
-        const usersData = await apiGet(ENDPOINTS.USERS);
-        const greenhousesData = await apiGet(ENDPOINTS.GREENHOUSES);
+      if (!checkAuth()) return;
 
-        if (!usersData || !greenhousesData) {
-          throw new Error("Error al obtener datos.");
+      try {
+        // Obtener usuarios básicos primero
+        console.log("Obteniendo usuarios...");
+        const { data: usersData, error: usersError } = await supabase
+          .from("users")
+          .select("id, username, role, created_at");
+
+        if (usersError) {
+          console.error("Error al obtener usuarios:", usersError);
+          throw new Error(`Error al obtener usuarios: ${usersError.message}`);
         }
 
-        setUsers(usersData);
-        setGreenhouses(greenhousesData);
+        // Obtener invernaderos básicos
+        console.log("Obteniendo invernaderos...");
+        const { data: greenhousesData, error: greenhousesError } =
+          await supabase
+            .from("greenhouses")
+            .select("id, name, location, user_id");
+
+        if (greenhousesError) {
+          console.error("Error al obtener invernaderos:", greenhousesError);
+          throw new Error(
+            `Error al obtener invernaderos: ${greenhousesError.message}`
+          );
+        }
+
+        console.log("Datos obtenidos exitosamente:", {
+          usuarios: usersData?.length || 0,
+          invernaderos: greenhousesData?.length || 0,
+        });
+
+        setUsers(usersData || []);
+        setGreenhouses(greenhousesData || []);
       } catch (err) {
+        console.error("Error completo:", err);
         setError(
-          err.message || "Hubo un problema al conectar con el servidor."
+          err instanceof Error
+            ? err.message
+            : "Hubo un problema al conectar con Supabase"
         );
       } finally {
         setLoading(false);
@@ -85,6 +137,23 @@ export default function Dashboard() {
                   <h3 className="text-lg font-medium mb-2 flex items-center">
                     <User className="mr-2" /> Usuarios
                   </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Total de usuarios: {users.length}
+                  </p>
+                  <div className="text-sm text-muted-foreground mb-4">
+                    <p>
+                      Administradores:{" "}
+                      {users.filter((u) => u.role === "admin").length}
+                    </p>
+                    <p>
+                      Agricultores:{" "}
+                      {users.filter((u) => u.role === "farmer").length}
+                    </p>
+                    <p>
+                      Visualizadores:{" "}
+                      {users.filter((u) => u.role === "viewer").length}
+                    </p>
+                  </div>
                   <Button
                     variant="outline"
                     onClick={() => navigate("/manage-users")}
@@ -97,6 +166,9 @@ export default function Dashboard() {
                   <h3 className="text-lg font-medium mb-2 flex items-center">
                     <Sprout className="mr-2" /> Invernaderos
                   </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Total de invernaderos registrados: {greenhouses.length}
+                  </p>
                   <Button
                     variant="outline"
                     onClick={() => navigate("/manage-greenhouses")}
@@ -106,15 +178,18 @@ export default function Dashboard() {
                 </div>
 
                 <div className="bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <h3 className="text-lg font-medium mb-2 flex items-center">
-                        <Sparkles className="mr-2" /> Dispositivos
-                    </h3>
-                    <Button
-                        variant="outline"
-                        onClick={() => navigate("/manage-devices")}
-                    >
-                        Gestionar Dispositivos
-                    </Button>
+                  <h3 className="text-lg font-medium mb-2 flex items-center">
+                    <Sparkles className="mr-2" /> Dispositivos
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Gestiona los dispositivos IoT y sensores
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate("/manage-devices")}
+                  >
+                    Gestionar Dispositivos
+                  </Button>
                 </div>
               </div>
             </>

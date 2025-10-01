@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { apiPost } from "@/lib/apiUtils";
-import { ENDPOINTS } from "@/lib/config";
+import { supabase } from "@/lib/utils/supabaseClient";
+import type { Greenhouse } from "@/lib/types";
 
-const CreateFarmerGreenhouseForm = ({ onCreateGreenhouse, onCancel }) => {
+interface CreateFarmerGreenhouseFormProps {
+  onCreateGreenhouse: (greenhouse: Greenhouse) => void;
+  onCancel: () => void;
+}
+
+const CreateFarmerGreenhouseForm: React.FC<CreateFarmerGreenhouseFormProps> = ({
+  onCreateGreenhouse,
+  onCancel,
+}) => {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name || !location) {
@@ -19,31 +27,45 @@ const CreateFarmerGreenhouseForm = ({ onCreateGreenhouse, onCancel }) => {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("No se encontró token de autenticación");
-        return;
-      }
-      
+
       // Obtener el user_id del usuario autenticado desde el localStorage
-      const user = JSON.parse(localStorage.getItem("user"));
-      const userId = user ? user.id : null;
-      
-      if (!userId) {
-        setError("No se pudo obtener la información del usuario");
-        return;
+      const userStr = localStorage.getItem("user");
+      if (!userStr) {
+        throw new Error("No se encontró la información del usuario");
       }
 
-      const newGreenhouse = await apiPost(ENDPOINTS.GREENHOUSES, {
-        name,
-        location,
-        user_id: userId, // Usar el ID del usuario autenticado
-      });
+      const user = JSON.parse(userStr);
+      if (!user.id) {
+        throw new Error("No se pudo obtener el ID del usuario");
+      }
 
-      if (!newGreenhouse) throw new Error("Error al crear el invernadero");
+      // Crear nuevo invernadero en Supabase
+      const { data: newGreenhouse, error: supaError } = await supabase
+        .from("greenhouses")
+        .insert([
+          {
+            name,
+            location,
+            user_id: user.id,
+          },
+        ])
+        .select()
+        .single();
+
+      if (supaError) {
+        throw new Error(`Error al crear el invernadero: ${supaError.message}`);
+      }
+
+      if (!newGreenhouse) {
+        throw new Error("No se pudo crear el invernadero");
+      }
+
       onCreateGreenhouse(newGreenhouse);
     } catch (err) {
-      setError(err.message);
+      console.error("Error:", err);
+      setError(
+        err instanceof Error ? err.message : "Error al crear el invernadero"
+      );
     } finally {
       setLoading(false);
     }
